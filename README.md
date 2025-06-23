@@ -80,3 +80,115 @@ console.log(loggerA === loggerB); // true
 O padrão Singleton é bastante útil em casos onde apenas uma instância de uma classe deve existir, como loggers, configurações globais, gerenciadores de conexão, entre outros.
 
 Apesar de ser simples e eficaz, deve ser usado com cautela para evitar acoplamento excessivo e dificuldade na testabilidade do sistema.
+
+# 🏭 Padrão de projeto: Factory Method
+
+## 🔷 O que é?
+
+O **Factory Method** é um padrão de projeto **criacional** que fornece uma interface para criar objetos, mas permite que as subclasses decidam **qual classe concreta será instanciada**. Ele ajuda a **desacoplar o código** que usa o objeto do código que cria o objeto.
+
+---
+
+## 💡 Quando Usar?
+
+- Quando você quer evitar acoplamento direto com classes concretas;
+- Quando seu sistema precisa ser facilmente **extensível**, adicionando novos tipos sem mudar o código existente;
+- Quando a criação dos objetos envolve lógica complexa ou variações de um mesmo tipo.
+
+---
+
+## ❌ Exemplo Sem Factory Method (TypeScript)
+
+//ts
+class EmailNotificacao {
+  enviar(msg: string) {
+    console.log(`[Email] ${msg}`);
+  }
+}
+
+class SMSNotificacao {
+  enviar(msg: string) {
+    console.log(`[SMS] ${msg}`);
+  }
+}
+
+// Código cliente decide qual classe usar
+const tipo = "sms";
+let notificacao;
+
+if (tipo === "email") {
+  notificacao = new EmailNotificacao();
+} else if (tipo === "sms") {
+  notificacao = new SMSNotificacao();
+}
+
+notificacao.enviar("Você tem uma nova mensagem.");
+
+## 🔴 Problemas:
+
+- O cliente está fortemente acoplado às classes concretas;
+
+- Toda mudança de tipo exige alteração no código cliente;
+
+- Difícil de escalar e manter.
+
+//ts
+
+interface Notificacao {
+  enviar(msg: string): void;
+}
+
+class EmailNotificacao implements Notificacao {
+  enviar(msg: string) {
+    console.log(`[Email] ${msg}`);
+  }
+}
+
+class SMSNotificacao implements Notificacao {
+  enviar(msg: string) {
+    console.log(`[SMS] ${msg}`);
+  }
+}
+
+abstract class NotificacaoFactory {
+  abstract criar(): Notificacao;
+}
+
+class EmailFactory extends NotificacaoFactory {
+  criar(): Notificacao {
+    return new EmailNotificacao();
+  }
+}
+
+class SMSFactory extends NotificacaoFactory {
+  criar(): Notificacao {
+    return new SMSNotificacao();
+  }
+}
+
+// Código cliente desacoplado
+const factory: NotificacaoFactory = new SMSFactory();
+const notificacao = factory.criar();
+notificacao.enviar("Você tem uma nova mensagem.");
+
+## 🟢 Benefícios:
+
+O cliente não sabe nem se preocupa com o tipo concreto;
+
+Código mais limpo, modular e preparado para crescer;
+
+Novos tipos podem ser adicionados com facilidade (ex: WhatsApp, Telegram, etc).
+
+## ⚖️ Pontos Fortes
+✔️ Reduz o acoplamento entre o código que usa e o que cria os objetos;
+✔️ Torna o sistema mais extensível e de fácil manutenção;
+✔️ Segue os princípios SOLID (especialmente o OCP - Aberto para extensão, fechado para modificação).
+
+❌ Pontos Fracos
+✖️ Adiciona mais classes e estrutura ao sistema;
+✖️ Pode parecer complexo demais para sistemas pequenos ou simples.
+
+## ✅ Conclusão
+O Factory Method é uma ótima solução quando precisamos criar objetos de maneira controlada e flexível, especialmente em sistemas que precisam crescer e se adaptar com o tempo.
+
+Embora pareça mais "verbooso" que o uso direto de new, ele oferece muito mais poder de organização, manutenção e testabilidade, e evita que o cliente precise conhecer todos os tipos concretos do sistema.
