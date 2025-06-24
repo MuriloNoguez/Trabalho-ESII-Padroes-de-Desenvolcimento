@@ -1,24 +1,24 @@
-# 🎯 Padrão de Projeto: Singleton
 
-## 📘 O que são Padrões de Projeto?
-Padrões de projeto são soluções reutilizáveis para problemas recorrentes durante o desenvolvimento de software orientado a objetos. Eles ajudam a tornar o código mais organizado, manutenível e escalável.
+# 🎯 Padrões de Projeto: Singleton e Factory Method
+
+# 🔷 Singleton
+
+## ✔️ Definição
+
+O padrão **Singleton** garante que uma classe tenha **apenas uma instância** e fornece um **ponto de acesso global** a ela.
 
 ---
 
-## 🔷 Singleton
+## 💡 Quando Usar?
 
-### ✔️ Definição
-O padrão Singleton garante que uma classe tenha apenas **uma instância** e fornece um ponto de acesso global a essa instância.
-
-### 💡 Quando Usar?
-- Quando precisa garantir que só exista **uma instância** de uma classe em toda a aplicação;
-- Quando você quer controlar o acesso a um recurso compartilhado (ex: banco de dados, logger, configurações globais).
+- Quando deve haver **uma única instância** de uma classe no sistema;
+- Quando precisa de **acesso global** a um recurso compartilhado (ex: Logger, Configuração, Conexão com Banco de Dados).
 
 ---
 
 ## 🚫 Exemplo **Sem** Singleton (TypeScript)
 
-.ts
+```ts
 // loggerSemSingleton.ts
 
 class Logger {
@@ -34,16 +34,19 @@ logger1.log("Primeira instância");
 logger2.log("Segunda instância");
 
 console.log(logger1 === logger2); // false
+```
 
-## 🚫 Exemplo **Com** Singleton (TypeScript)
+---
 
-.ts
+## ✅ Exemplo **Com** Singleton (TypeScript)
+
+```ts
 // loggerComSingleton.ts
 
 class SingletonLogger {
   private static instance: SingletonLogger;
 
-  private constructor() {} // impede uso de new fora da classe
+  private constructor() {}
 
   static getInstance(): SingletonLogger {
     if (!SingletonLogger.instance) {
@@ -57,7 +60,6 @@ class SingletonLogger {
   }
 }
 
-// Testando
 const loggerA = SingletonLogger.getInstance();
 const loggerB = SingletonLogger.getInstance();
 
@@ -65,41 +67,45 @@ loggerA.log("Usando instância A");
 loggerB.log("Usando instância B");
 
 console.log(loggerA === loggerB); // true
+```
+
+---
 
 ## ⚖️ Pontos Fortes
-- Garante que apenas uma instância exista;
-- Controla o acesso a recursos compartilhados;
-- Fácil de implementar;
+
+✅ Garante apenas uma instância  
+✅ Ideal para recursos globais  
+✅ Simples de implementar
+
+---
 
 ## ❌ Pontos Fracos
-- Viola o princípio da responsabilidade única (SRP);
-- Dificulta testes unitários (difícil de mockar);
-- Pode gerar acoplamento global se mal utilizado;
 
-## ✅ Conclusão
-O padrão Singleton é bastante útil em casos onde apenas uma instância de uma classe deve existir, como loggers, configurações globais, gerenciadores de conexão, entre outros.
+❌ Dificulta testes (difícil de "mockar")  
+❌ Pode violar SRP (Responsabilidade Única)  
+❌ Pode causar acoplamento global
 
-Apesar de ser simples e eficaz, deve ser usado com cautela para evitar acoplamento excessivo e dificuldade na testabilidade do sistema.
+---
 
-# 🏭 Padrão de projeto: Factory Method
+# 🏭 Factory Method
 
 ## 🔷 O que é?
 
-O **Factory Method** é um padrão de projeto **criacional** que fornece uma interface para criar objetos, mas permite que as subclasses decidam **qual classe concreta será instanciada**. Ele ajuda a **desacoplar o código** que usa o objeto do código que cria o objeto.
+O **Factory Method** é um padrão **criacional** que fornece uma interface para criar objetos, mas permite que **subclasses decidam qual classe concreta instanciar**.
 
 ---
 
 ## 💡 Quando Usar?
 
-- Quando você quer evitar acoplamento direto com classes concretas;
-- Quando seu sistema precisa ser facilmente **extensível**, adicionando novos tipos sem mudar o código existente;
-- Quando a criação dos objetos envolve lógica complexa ou variações de um mesmo tipo.
+- Para **desacoplar** o código cliente da criação dos objetos;
+- Quando há **múltiplos tipos** que compartilham a mesma interface;
+- Quando o sistema precisa ser **escalável e extensível**.
 
 ---
 
-## ❌ Exemplo Sem Factory Method (TypeScript)
+## 🚫 Exemplo Sem Factory Method
 
-//ts
+```ts
 class EmailNotificacao {
   enviar(msg: string) {
     console.log(`[Email] ${msg}`);
@@ -112,7 +118,6 @@ class SMSNotificacao {
   }
 }
 
-// Código cliente decide qual classe usar
 const tipo = "sms";
 let notificacao;
 
@@ -123,17 +128,13 @@ if (tipo === "email") {
 }
 
 notificacao.enviar("Você tem uma nova mensagem.");
+```
 
-## 🔴 Problemas:
+---
 
-- O cliente está fortemente acoplado às classes concretas;
+## ✅ Exemplo Com Factory Method
 
-- Toda mudança de tipo exige alteração no código cliente;
-
-- Difícil de escalar e manter.
-
-//ts
-
+```ts
 interface Notificacao {
   enviar(msg: string): void;
 }
@@ -166,57 +167,47 @@ class SMSFactory extends NotificacaoFactory {
   }
 }
 
-// Código cliente desacoplado
 const factory: NotificacaoFactory = new SMSFactory();
 const notificacao = factory.criar();
 notificacao.enviar("Você tem uma nova mensagem.");
-
-## 🟢 Benefícios:
-
-O cliente não sabe nem se preocupa com o tipo concreto;
-
-Código mais limpo, modular e preparado para crescer;
-
-Novos tipos podem ser adicionados com facilidade (ex: WhatsApp, Telegram, etc).
-
-## ⚖️ Pontos Fortes
-✔️ Reduz o acoplamento entre o código que usa e o que cria os objetos;
-✔️ Torna o sistema mais extensível e de fácil manutenção;
-✔️ Segue os princípios SOLID (especialmente o OCP - Aberto para extensão, fechado para modificação).
-
-❌ Pontos Fracos
-✖️ Adiciona mais classes e estrutura ao sistema;
-✖️ Pode parecer complexo demais para sistemas pequenos ou simples.
-
-## ✅ Conclusão
-O Factory Method é uma ótima solução quando precisamos criar objetos de maneira controlada e flexível, especialmente em sistemas que precisam crescer e se adaptar com o tempo.
-
-Embora pareça mais "verbooso" que o uso direto de new, ele oferece muito mais poder de organização, manutenção e testabilidade, e evita que o cliente precise conhecer todos os tipos concretos do sistema.
-
-## 🔍 Comparativo: Singleton vs Factory Method
-
-| Aspecto                     | Singleton                                            | Factory Method                                                        |
-|----------------------------|------------------------------------------------------|------------------------------------------------------------------------|
-| 🎯 **Objetivo**            | Garantir que uma classe tenha **uma única instância**| Delegar a criação de objetos para subclasses                          |
-| 🏗️ **Categoria**           | Criacional                                           | Criacional                                                             |
-| 🧠 **Controle de instância**| Total: apenas uma instância é criada                 | Nenhum: múltiplas instâncias podem ser criadas conforme a necessidade |
-| 🔄 **Flexibilidade**        | Baixa: restringe a criação de múltiplas instâncias   | Alta: permite escolher dinamicamente qual classe instanciar           |
-| 🔌 **Desacoplamento**       | Baixo: código depende diretamente da classe Singleton| Alto: o cliente depende de uma interface, não da implementação        |
-| 🧪 **Testabilidade**        | Difícil de testar (instância global é difícil de mockar)| Fácil de testar (objetos podem ser mockados via interface)           |
-| 📦 **Exemplo típico**       | Logger, Configuração global, Conexão de BD           | Criador de notificações, documentos, interfaces diferentes            |
-| 💬 **Instância única**      | Sim                                                  | Não                                                                   |
-| 🧱 **Complexidade estrutural** | Simples e direta                                  | Envolve hierarquia de classes (fábricas e produtos)                  |
-| ✅ **Prós**                 | Controle total da instância, simples de usar         | Altamente extensível e desacoplado                                   |
-| ❌ **Contras**              | Acoplamento global, difícil de testar, quebra SRP    | Estrutura mais complexa, pode ser “overkill” para casos simples       |
+```
 
 ---
 
-## 🎯 Conclusão do Comparativo
+## 🟢 Benefícios
 
-- O **Singleton** é ideal quando se quer **garantir uma única instância** de algo no sistema e esse algo precisa estar acessível globalmente. É simples e direto, mas pode trazer problemas de acoplamento e dificultar testes.
+✔️ Código limpo, modular e extensível  
+✔️ Fácil adicionar novos tipos (ex: WhatsApp, Push)  
+✔️ Reduz o acoplamento
 
-- Já o **Factory Method** brilha quando queremos **desacoplar a criação de objetos do uso desses objetos**, tornando o sistema mais extensível e aderente aos princípios do SOLID, especialmente o OCP (Aberto para extensão, fechado para modificação).
+---
 
-👉 **Resumo prático**:  
-Use **Singleton** quando quiser **controlar o número de instâncias**.  
-Use **Factory Method** quando quiser **flexibilidade na criação de objetos sem depender das classes concretas**.
+## ❌ Pontos Fracos
+
+✖️ Mais classes e abstrações  
+✖️ Pode ser exagerado em sistemas simples
+
+---
+
+# 🧠 Comparativo: Singleton vs Factory Method
+
+| Aspecto                     | Singleton                                            | Factory Method                                                        |
+|----------------------------|------------------------------------------------------|------------------------------------------------------------------------|
+| 🎯 Objetivo                | Uma instância global                                 | Delegar criação de instâncias                                         |
+| 🧱 Categoria                | Criacional                                           | Criacional                                                             |
+| 🧠 Controle de Instância    | Sim (única)                                          | Não                                                                   |
+| 🔄 Flexibilidade           | Baixa                                                | Alta                                                                  |
+| 🔌 Acoplamento             | Alto (instância global)                              | Baixo (interface + fábrica)                                           |
+| 🧪 Testabilidade           | Baixa (mock é difícil)                               | Alta (mock fácil via interface)                                       |
+| 📦 Exemplos de uso         | Logger, Configuração, Cache                          | Sistema de notificações, fábrica de documentos                        |
+| 🧩 Complexidade estrutural | Baixa                                                | Média a alta                                                          |
+
+---
+
+## ✅ Conclusão do Comparativo
+
+- **Singleton** é ótimo para garantir **uma única instância** global de um recurso.
+- **Factory Method** é ideal quando o sistema precisa de **flexibilidade para criar objetos sem depender diretamente das classes concretas**.
+
+👉 Use Singleton quando você quer **controle absoluto sobre instâncias**.  
+👉 Use Factory Method quando você quer **desacoplar criação de uso**, facilitando a expansão do sistema.
