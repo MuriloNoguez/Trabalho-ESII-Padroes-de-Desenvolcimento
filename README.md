@@ -192,3 +192,31 @@ Novos tipos podem ser adicionados com facilidade (ex: WhatsApp, Telegram, etc).
 O Factory Method é uma ótima solução quando precisamos criar objetos de maneira controlada e flexível, especialmente em sistemas que precisam crescer e se adaptar com o tempo.
 
 Embora pareça mais "verbooso" que o uso direto de new, ele oferece muito mais poder de organização, manutenção e testabilidade, e evita que o cliente precise conhecer todos os tipos concretos do sistema.
+
+## 🔍 Comparativo: Singleton vs Factory Method
+
+| Aspecto                     | Singleton                                            | Factory Method                                                        |
+|----------------------------|------------------------------------------------------|------------------------------------------------------------------------|
+| 🎯 **Objetivo**            | Garantir que uma classe tenha **uma única instância**| Delegar a criação de objetos para subclasses                          |
+| 🏗️ **Categoria**           | Criacional                                           | Criacional                                                             |
+| 🧠 **Controle de instância**| Total: apenas uma instância é criada                 | Nenhum: múltiplas instâncias podem ser criadas conforme a necessidade |
+| 🔄 **Flexibilidade**        | Baixa: restringe a criação de múltiplas instâncias   | Alta: permite escolher dinamicamente qual classe instanciar           |
+| 🔌 **Desacoplamento**       | Baixo: código depende diretamente da classe Singleton| Alto: o cliente depende de uma interface, não da implementação        |
+| 🧪 **Testabilidade**        | Difícil de testar (instância global é difícil de mockar)| Fácil de testar (objetos podem ser mockados via interface)           |
+| 📦 **Exemplo típico**       | Logger, Configuração global, Conexão de BD           | Criador de notificações, documentos, interfaces diferentes            |
+| 💬 **Instância única**      | Sim                                                  | Não                                                                   |
+| 🧱 **Complexidade estrutural** | Simples e direta                                  | Envolve hierarquia de classes (fábricas e produtos)                  |
+| ✅ **Prós**                 | Controle total da instância, simples de usar         | Altamente extensível e desacoplado                                   |
+| ❌ **Contras**              | Acoplamento global, difícil de testar, quebra SRP    | Estrutura mais complexa, pode ser “overkill” para casos simples       |
+
+---
+
+## 🎯 Conclusão do Comparativo
+
+- O **Singleton** é ideal quando se quer **garantir uma única instância** de algo no sistema e esse algo precisa estar acessível globalmente. É simples e direto, mas pode trazer problemas de acoplamento e dificultar testes.
+
+- Já o **Factory Method** brilha quando queremos **desacoplar a criação de objetos do uso desses objetos**, tornando o sistema mais extensível e aderente aos princípios do SOLID, especialmente o OCP (Aberto para extensão, fechado para modificação).
+
+👉 **Resumo prático**:  
+Use **Singleton** quando quiser **controlar o número de instâncias**.  
+Use **Factory Method** quando quiser **flexibilidade na criação de objetos sem depender das classes concretas**.
