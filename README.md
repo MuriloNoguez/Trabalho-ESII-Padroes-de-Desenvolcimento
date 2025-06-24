@@ -1,5 +1,5 @@
 
-# 🎯 Padrões de Projeto: Singleton e Factory Method
+# 🎯 Padrões de Projeto: Singleton e Factory Method - Murilo Noguêz, Silvio Castilhos
 
 # 🔷 Singleton
 
